@@ -1,4 +1,4 @@
-// app/admin-room/new/page.tsx
+
 "use client";
 
 import client from "@/lib/graphql-client";
@@ -32,7 +32,8 @@ const CREATE_ROOM = gql`
 
 export default function NewRoomPage() {
   const router = useRouter();
-  const [form, setForm] = useState({
+
+  const [newRoom, setNewRoom] = useState({
     title: "",
     description: "",
     price: "",
@@ -43,16 +44,27 @@ export default function NewRoomPage() {
 
   const [createRoom, { loading }] = useMutation(CREATE_ROOM, { client });
 
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type, checked } = e.target;
+    setNewRoom((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await createRoom({
       variables: {
-        title: form.title,
-        description: form.description,
-        price: parseFloat(form.price),
-        image: form.image,
-        capacity: parseInt(form.capacity, 10),
-        available: form.available,
+        title: newRoom.title,
+        description: newRoom.description,
+        price: parseFloat(newRoom.price),
+        image: newRoom.image,
+        capacity: parseInt(newRoom.capacity, 10),
+        available: newRoom.available,
       },
     });
     router.push("/admin-room");
@@ -60,55 +72,67 @@ export default function NewRoomPage() {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow">
+    <div className="relative max-w-lg mx-auto p-6 bg-white rounded-lg shadow">
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg z-10">
+          <p className="text-2xl font-bold text-blue-600 animate-pulse">
+            MAKINSHOTEL
+          </p>
+        </div>
+      )}
+
       <h1 className="text-2xl font-bold mb-4">Add New Room</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
+          name="title"
           placeholder="Room Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          value={newRoom.title}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <textarea
+          name="description"
           placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
+          value={newRoom.description}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <input
           type="number"
+          name="price"
           placeholder="Price"
-          value={form.price}
-          onChange={(e) => setForm({ ...form, price: e.target.value })}
+          value={newRoom.price}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <input
           type="text"
+          name="image"
           placeholder="Image URL"
-          value={form.image}
-          onChange={(e) => setForm({ ...form, image: e.target.value })}
+          value={newRoom.image}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <input
           type="number"
+          name="capacity"
           placeholder="Capacity"
-          value={form.capacity}
-          onChange={(e) => setForm({ ...form, capacity: e.target.value })}
+          value={newRoom.capacity}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <label className="flex items-center space-x-2">
           <input
             type="checkbox"
-            checked={form.available}
-            onChange={(e) =>
-              setForm({ ...form, available: e.target.checked })
-            }
+            name="available"
+            checked={newRoom.available}
+            onChange={handleInputChange}
           />
           <span>Available</span>
         </label>

@@ -33,23 +33,43 @@
 //   );
 // }
 
-import type { Metadata } from "next"
-import "./globals.css"
-import { AuthProvider } from "./context/AuthContext"
+// import type { Metadata } from "next"
+// import "./globals.css"
+// import { AuthProvider } from "./context/AuthContext"
 
-export const metadata: Metadata = {
-  title: "Hotel Management",
-  description: "Your app",
-}
+// export const metadata: Metadata = {
+//   title: "Hotel Management",
+//   description: "Your app",
+// }
+
+// export default function RootLayout({ children }: { children: React.ReactNode }) {
+//   return (
+//     <html lang="en">
+//       <body>
+//         <AuthProvider>
+//           {children}
+//         </AuthProvider>
+//       </body>
+//     </html>
+//   )
+// }
+
+
+"use client";
+
+import { ApolloProvider } from "@apollo/client/react";
+import client from "@/lib/graphql-client";
+import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
+        <ApolloProvider client={client}>
           {children}
-        </AuthProvider>
+        </ApolloProvider>
       </body>
     </html>
-  )
+  );
 }
+

@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "clean": "rimraf .next node_modules package-lock.json"
   },
   "dependencies": {
-    "@apollo/client": "^4.0.5",
+    "@apollo/client": "^4.0.7",
     "@apollo/server": "^5.0.0",
     "@as-integrations/next": "^4.0.0",
     "bcrypt": "^6.0.0",
@@ -32,6 +32,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

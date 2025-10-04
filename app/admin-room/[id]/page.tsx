@@ -1,4 +1,4 @@
-// app/admin-room/[id]/page.tsx
+
 "use client";
 
 import client from "@/lib/graphql-client";
@@ -8,8 +8,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const GET_ROOM = gql`
-  query Room($id: ID!) {
-    room(id: $id) {
+  query Room($_id: ID!) {
+    room(_id: $_id) {
       _id
       title
       description
@@ -23,16 +23,16 @@ const GET_ROOM = gql`
 
 const UPDATE_ROOM = gql`
   mutation UpdateRoom(
-    $id: ID!
-    $title: String!
-    $description: String!
-    $price: Float!
-    $image: String!
-    $capacity: Int!
-    $available: Boolean!
+    $_id: ID!
+    $title: String
+    $description: String
+    $price: Float
+    $image: String
+    $capacity: Int
+    $available: Boolean
   ) {
     updateRoom(
-      id: $id
+      _id: $_id
       title: $title
       description: $description
       price: $price
@@ -42,6 +42,11 @@ const UPDATE_ROOM = gql`
     ) {
       _id
       title
+      description
+      price
+      image
+      capacity
+      available
     }
   }
 `;
@@ -50,50 +55,84 @@ export default function EditRoomPage() {
   const { id } = useParams();
   const router = useRouter();
 
-  const { data, loading } = useQuery(GET_ROOM, { variables: { id }, client });
-  const [updateRoom, { loading: saving }] = useMutation(UPDATE_ROOM, { client });
+  const { data: roomData, loading } = useQuery(GET_ROOM, {
+    variables: { _id: id },
+    client,
+  });
 
-  const [form, setForm] = useState({  
+  const roomDetails = roomData?.room;
+
+  const [updateRoom, { loading: saving }] = useMutation(UPDATE_ROOM, {
+    client,
+  });
+
+  const [roomEdit, setRoomEdit] = useState({
     title: "",
     description: "",
     price: "",
     image: "",
     capacity: "1",
     available: true,
-  });  //dont use this if you want the form to capture the previous inputdata
-
-
+  });
 
   useEffect(() => {
-    if (data?.room) {
-      setForm({
-        title: data.room.title,
-        description: data.room.description,
-        price: data.room.price.toString(),
-        image: data.room.image,
-        capacity: data.room.capacity.toString(),
-        available: data.room.available,
+    if (roomDetails) {
+      const { title, description, price, image, capacity, available } =
+        roomDetails;
+      setRoomEdit({
+        title,
+        description,
+        price: price.toString(),
+        image,
+        capacity: capacity.toString(),
+        available,
       });
     }
-  }, [data]);
+  }, [roomDetails]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type, checked } = e.target;
+    setRoomEdit((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateRoom({
       variables: {
-        id,
-        title: form.title,
-        description: form.description,
-        price: parseFloat(form.price),
-        image: form.image,
-        capacity: parseInt(form.capacity, 10),
-        available: form.available,
+        _id: id,
+        title: roomEdit.title,
+        description: roomEdit.description,
+        price: parseFloat(roomEdit.price),
+        image: roomEdit.image,
+        capacity: parseInt(roomEdit.capacity, 10),
+        available: roomEdit.available,
       },
     });
     router.push("/admin-room");
   };
 
-  if (loading) return <p>Loading room...</p>;
+  // Skeleton while loading
+  if (loading) {
+    return (
+      <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow animate-pulse">
+        <div className="h-8 bg-gray-200 rounded mb-6 w-1/3"></div>
+        <div className="space-y-4">
+          <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="h-20 bg-gray-200 rounded"></div>
+          <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-10 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow">
@@ -101,50 +140,54 @@ export default function EditRoomPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
+          name="title"
           placeholder="Room Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          value={roomEdit.title}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <textarea
+          name="description"
           placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
+          value={roomEdit.description}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <input
           type="number"
+          name="price"
           placeholder="Price"
-          value={form.price}
-          onChange={(e) => setForm({ ...form, price: e.target.value })}
+          value={roomEdit.price}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <input
           type="text"
+          name="image"
           placeholder="Image URL"
-          value={form.image}
-          onChange={(e) => setForm({ ...form, image: e.target.value })}
+          value={roomEdit.image}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <input
           type="number"
+          name="capacity"
           placeholder="Capacity"
-          value={form.capacity}
-          onChange={(e) => setForm({ ...form, capacity: e.target.value })}
+          value={roomEdit.capacity}
+          onChange={handleInputChange}
           className="w-full border p-2 rounded"
           required
         />
         <label className="flex items-center space-x-2">
           <input
             type="checkbox"
-            checked={form.available}
-            onChange={(e) =>
-              setForm({ ...form, available: e.target.checked })
-            }
+            name="available"
+            checked={roomEdit.available}
+            onChange={handleInputChange}
           />
           <span>Available</span>
         </label>
@@ -159,5 +202,3 @@ export default function EditRoomPage() {
     </div>
   );
 }
-
-

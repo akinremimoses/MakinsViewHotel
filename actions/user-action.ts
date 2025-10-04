@@ -36,7 +36,7 @@ export const registerUser = async (user: {
 }) => {
   try {
     await dbConnect();
-    console.log("📥 Creating user:", user.email);
+    console.log("Creating user:", user.email);
 
     const newUser = await UserModel.create(user); // ✅ should trigger pre("save")
 
@@ -51,48 +51,55 @@ export const registerUser = async (user: {
 
 
 export const loginAction = async ({ email, password }: { password: string, email: string }) => {
-	try {
-		await dbConnect()
+  try {
+    await dbConnect()
 
-		const user = await UserModel.findOne({ email });
-		if (!user) {
-			return {
-				success: false,
-				message: "User not found"
-			}
-		}
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return {
+        success: false, // ✅ Changed to false
+        message: "User not found"
+      }
+    }
 
-		const hashedPassword = user.password;
-		const validPassword = await bcrypt.compare(password, hashedPassword);
+    const hashedPassword = user.password;
+    const validPassword = await bcrypt.compare(password, hashedPassword);
 
-		if (!validPassword) {
-			return {
-				success: false,
-				message: "Invalid Details"
-			}
-		}
+    if (!validPassword) {
+      return {
+        success: false,
+        message: "Invalid Details"
+      }
+    }
 
-		// const token = jwt.sign({ id: String(user._id) }, process.env.JWT_SECRET!, { expiresIn: '2h' });
+    const token = await new SignJWT({ id: String(user._id), role: user.role })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime("2h")
+      .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
-		const token = await new SignJWT({ id: String(user._id) })
-			.setProtectedHeader({ alg: 'HS256' })
-			.setExpirationTime("2h").setIssuedAt().sign(encodedSecret);
+    const cookieStore = await cookies();
 
-		const cookieStore = await cookies();
+    cookieStore.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
 
-		cookieStore.set("token", token, {
-			secure: process.env.NODE_ENV === "production"
-		});
-
-		return {
-			success: true
-		}
-	} catch (error) {
-		console.log(error);
-		return {
-			success: false
-		}
-	}
+    return {
+      success: true,
+      user: { // ✅ Return user info including role
+        id: user._id,
+        role: user.role
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Server error"
+    }
+  }
 }
 
 export const logout = async () => {
@@ -102,27 +109,29 @@ export const logout = async () => {
 }
 
 
-export const verifyUser = async () => {
-	const cookieStore = await cookies();
-	const token = cookieStore.get("token")?.value;
+// export const verifyUser = async () => {
+//   const cookieStore = cookies();
+//   const token = cookieStore.get("token")?.value;
 
-	if (!token) {
-		return { success: false }
-	}
+//   if (!token) {
+//     return { success: false };
+//   }
 
-	// const payload = jwt.verify(token, process.env.JWT_SECRET!);
-	const { payload } = await jwtVerify(token, encodedSecret, {
-		algorithms: ['HS256']
-	})
+//   try {
+//     const { payload } = await jwtVerify(token, encodedSecret, {
+//       algorithms: ["HS256"],
+//     });
 
-	return {
-		id: payload.id,
-		success: true
-	}
-}
+//     return { id: payload.id as string, success: true };
+//   } catch (err) {
+//     console.error("JWT verify failed:", err);
+//     return { success: false };
+//   }
+// };
 
-export const getUserWithId = async (id: string) => {
-	const user = await UserModel.findById(id).lean();
 
-	return user;
-}
+// export const getUserWithId = async (id: string) => {
+// 	const user = await UserModel.findById(id).lean();
+
+// 	return user;
+// }

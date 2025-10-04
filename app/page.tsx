@@ -1,129 +1,99 @@
+"use client";
+
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/footer";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
-   <Navbar /> 
-   
+    <div className="min-h-screen flex flex-col">
+      {/* Hero Section with background image (half screen) */}
+      <div className="relative h-[60vh] w-full">
+        <Image
+          src="/homepage3.jpg" // place your image in /public folder
+          alt="Hotel background"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/40" /> {/* Dark overlay */}
+
+        {/* Navbar */}
+        <Navbar />
+
+        {/* Hero Content */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
+            Welcome to Luxury Stays
+          </h1>
+          <p className="text-lg md:text-2xl text-white mb-8 max-w-2xl drop-shadow-md">
+            Find and book the best rooms for your next stay. Comfortable,
+            modern, and unforgettable experiences await.
+          </p>
+          <div className="flex flex-col md:flex-row gap-4">
+            <Link
+              href="/rooms"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+            >
+              View Rooms
+            </Link>
+            <Link
+              href="/register"
+              className="bg-white hover:bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold transition"
+            >
+              Upcoming Events
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* White Background Section for Images */}
+      <section className="bg-white py-16 flex-1">
+        <div className="container mx-auto px-4 text-center">
+          <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-12">
+            WELCOME TO THE MAKINSVIEW EXPERIENCE
+          </h3>
+
+          <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
+            <div className="flex flex-col items-center">
+              <Image
+                src="/homepage7.jpg"
+                alt="Luxury Rooms"
+                width={400}
+                height={250}
+                className="rounded-lg shadow-lg object-cover"
+              />
+              <p className="text-gray-700 mt-3 text-lg">Luxury Rooms</p>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <Image
+                src="/homepage5.jpg"
+                alt="Fine Dining"
+                width={400}
+                height={250}
+                className="rounded-lg shadow-lg object-cover"
+              />
+              <p className="text-gray-700 mt-3 text-lg">Fine Dining</p>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <Image
+                src="/homepage6.jpg"
+                alt="Relax & Enjoy"
+                width={400}
+                height={250}
+                className="rounded-lg shadow-lg object-cover"
+              />
+              <p className="text-gray-700 mt-3 text-lg">Relax & Enjoy</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <Footer />
+    </div>
   );
 }
-
-<div>
-
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// "use client"
-
-// import React, { useState } from "react"
-// import Link from "next/link"
-
-// const HomePage = () => {
-//   const [showDropdown, setShowDropdown] = useState(false)
-
-//   return (
-//     <div className="relative h-screen w-full overflow-hidden">
-//       {/* Background Video */}
-//       <video
-//         autoPlay
-//         loop
-//         muted
-//         playsInline
-//         className="absolute inset-0 w-full h-full object-cover"
-//       >
-//         <source src="https://pixabay.com/videos/pyramid-hotel-building-architecture-204588/" type="video/mp4" />
-//         Your browser does not support the video tag.
-//       </video>
-
-//       {/* Overlay for slight dark effect */}
-//       <div className="absolute inset-0 bg-black/40 z-10"></div>
-
-//       {/* Navbar */}
-//       <nav className="absolute top-0 left-0 w-full z-20 flex items-center justify-between px-6 py-6 bg-transparent">
-//         {/* Left: Account */}
-//         <div className="relative">
-//           <button
-//             onClick={() => setShowDropdown(!showDropdown)}
-//             className="text-white font-medium hover:underline"
-//           >
-//             ACCOUNT
-//           </button>
-//           {showDropdown && (
-//             <div className="absolute left-0 mt-2 w-32 bg-white rounded shadow-lg">
-//               <Link
-//                 href="/login"
-//                 className="block px-4 py-2 text-sm hover:bg-gray-100"
-//               >
-//                 Login
-//               </Link>
-//               <Link
-//                 href="/signup"
-//                 className="block px-4 py-2 text-sm hover:bg-gray-100"
-//               >
-//                 Sign Up
-//               </Link>
-//             </div>
-//           )}
-//         </div>
-
-//         {/* Center: Brand */}
-//         <h1 className="text-3xl md:text-4xl font-bold text-white">
-//           MakinsViewHotel
-//         </h1>
-
-//         {/* Right: Book */}
-//         <Link
-//           href="/book"
-//           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
-//         >
-//           BOOK
-//         </Link>
-//       </nav>
-
-//       {/* Hero Content */}
-//       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white px-6">
-//         <h2 className="text-4xl md:text-6xl font-bold">
-//           Welcome to MakinsView Hotel
-//         </h2>
-//         <p className="mt-4 text-lg md:text-xl max-w-2xl">
-//           Experience luxury, comfort, and unforgettable moments with us.
-//         </p>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default HomePage

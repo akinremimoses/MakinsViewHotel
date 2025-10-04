@@ -50,21 +50,32 @@ const Page = () => {
 
  
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true)
-    try {
-      const res = await loginAction(loginInfo); //sending the state directly
-      if (res.success) {
-        setError("✅ Login successful");
-        router.push("/dashboard");
+  e.preventDefault();
+  setError("");
+  setLoading(true);
+
+  try {
+    const res = await loginAction(loginInfo);
+
+    if (res.success) {
+      setError("✅ Login successful");
+
+      // ✅ Redirect based on user role
+      if (res.user?.role === "admin") {
+        router.push("/admin-room");
       } else {
-        setError(res.message || "❌ Login failed");
+        router.push("/dashboard");
       }
-    } catch {
-      setError("❌ Server error, please try again");
+    } else {
+      setError(res.message || "❌ Login failed");
     }
+  } catch {
+    setError("❌ Server error, please try again");
+  } finally {
+    setLoading(false);
   }
+};
+
 
   return (
     <div className="relative h-screen w-full">

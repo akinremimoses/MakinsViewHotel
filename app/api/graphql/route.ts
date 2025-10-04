@@ -2,10 +2,13 @@ import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import gql from "graphql-tag";
 import { NextRequest } from "next/server";
+import dbConnect from "@/lib/dbConnect";
 import RoomModel from "@/models/roomSchema";
 import BookingModel from "@/models/bookingSchema";
-import dbConnect from "@/lib/dbConnect";
+import UserModel from "@/models/usersSchema"; // ✅ Fixed import
+import { verifyUser } from "@/actions/verifyuser";
 
+// ---------------- GraphQL Schema ----------------
 export const typeDefs = gql`
   type Room {
     _id: ID!
@@ -19,8 +22,10 @@ export const typeDefs = gql`
 
   type User {
     _id: ID!
-    name: String!
+    surname: String!
+    middlename: String
     email: String!
+     bookings: [Booking!]! 
   }
 
   type Booking {
@@ -38,6 +43,7 @@ export const typeDefs = gql`
     room(_id: ID!): Room
     bookings: [Booking!]!
     booking(_id: ID!): Booking
+    me: User
   }
 
   type Mutation {
@@ -48,130 +54,203 @@ export const typeDefs = gql`
       image: String!
       capacity: Int!
       available: Boolean!
-    ): Room
+    ): Room!
 
     updateRoom(
-      id: ID!
+      _id: ID!
       title: String
       description: String
       price: Float
       image: String
       capacity: Int
       available: Boolean
-    ): Room
+    ): Room!
 
-    deleteRoom(id: ID!): Boolean!
+    deleteRoom(_id: ID!): Boolean!
 
     createBooking(
       roomId: ID!
-      userId: ID!
       checkIn: String!
       checkOut: String!
     ): Booking!
   }
 `;
 
-// export const resolvers = {
-//   Query: {
-//     rooms: async () => {
-//       await dbConnect();
-//       return await RoomModel.find();
-//     },
-//     room: async (_parent: unknown, { _id }: { _id: string }) => {
-//       await dbConnect();
-//       return await RoomModel.findById(_id);
-//     },
-//   },
-//   Mutation: {
-//     createRoom: async (
-//       _parent: unknown,
-//       { title, description, price, image, capacity, available }: any
-//     ) => {
-//       await dbConnect(); // ✅ ensure DB is connected
-//       const newRoom = new RoomModel({
-//         title,
-//         description,
-//         price,
-//         image,
-//         capacity,
-//         available,
-//       });
-//       return await newRoom.save();
-//     },
-//   },
-// };
-
+// ---------------- Resolvers ----------------
 export const resolvers = {
   Query: {
     rooms: async () => {
       await dbConnect();
       return await RoomModel.find();
     },
-    room: async (_: any, { _id }: { _id: string }) => {
+
+    room: async (_parent: unknown, { _id }: { _id: string }) => {
       await dbConnect();
       return await RoomModel.findById(_id);
     },
+
     bookings: async () => {
       await dbConnect();
       return await BookingModel.find().populate("room").populate("user");
     },
-    booking: async (_: any, { _id }: { _id: string }) => {
+
+    booking: async (_parent: unknown, { _id }: { _id: string }) => {
       await dbConnect();
       return await BookingModel.findById(_id).populate("room").populate("user");
+    },
+
+    me: async (_parent: unknown, _args: any, _context: any) => {
+      await dbConnect();
+      const { id: userId, success } = await verifyUser(_context.req);
+      if (!success || !userId) return null;
+
+      const user = await UserModel.findById(userId).lean();
+      if (!user) return null;
+
+      // Include bookings for this user
+      const bookings = await BookingModel.find({ user: userId })
+        .populate("room")
+        .populate("user");
+
+      return { ...user, bookings };
     },
   },
 
   Mutation: {
-    createRoom: async (
-      _: any,
-      { title, description, price, image, capacity, available }: any
+    // ✅ ADDED: updateRoom mutation resolver
+    updateRoom: async (
+      _parent: unknown,
+      { 
+        _id, 
+        title, 
+        description, 
+        price, 
+        image, 
+        capacity, 
+        available 
+      }: { 
+        _id: string;
+        title?: string;
+        description?: string;
+        price?: number;
+        image?: string;
+        capacity?: number;
+        available?: boolean;
+      }
     ) => {
-      await dbConnect();
-      const newRoom = new RoomModel({
-        title,
-        description,
-        price,
-        image,
-        capacity,
-        available,
-      });
-      return await newRoom.save();
+      try {
+        await dbConnect();
+        
+        // Build update object with only provided fields
+        const updateData: any = {};
+        if (title !== undefined) updateData.title = title;
+        if (description !== undefined) updateData.description = description;
+        if (price !== undefined) updateData.price = price;
+        if (image !== undefined) updateData.image = image;
+        if (capacity !== undefined) updateData.capacity = capacity;
+        if (available !== undefined) updateData.available = available;
+
+        // Find and update the room
+        const updatedRoom = await RoomModel.findByIdAndUpdate(
+          _id,
+          updateData,
+          { 
+            new: true, // Return the updated document
+            runValidators: true // Run schema validators
+          }
+        );
+
+        // If room not found, throw error instead of returning null
+        if (!updatedRoom) {
+          console.log(`Room with id ${_id} not found`);
+        }
+
+        return updatedRoom;
+      } catch (error) {
+        console.error("Update room error:", error);
+        throw new Error(`Failed to update room: ${error.message}`);
+      }
     },
 
-    updateRoom: async (_, { id, ...updates }) => {
-      await dbConnect();
-      const updatedRoom = await RoomModel.findByIdAndUpdate(id, updates, {
-        new: true,
-      });
-      if (!updatedRoom) throw new Error("Room not found ❌");
-      return updatedRoom;
+    // ✅ ADDED: createRoom mutation resolver (was also missing)
+    createRoom: async (
+      _parent: unknown,
+      { 
+        title, 
+        description, 
+        price, 
+        image, 
+        capacity, 
+        available 
+      }: { 
+        title: string;
+        description: string;
+        price: number;
+        image: string;
+        capacity: number;
+        available: boolean;
+      }
+    ) => {
+      try {
+        await dbConnect();
+        
+        const newRoom = new RoomModel({
+          title,
+          description,
+          price,
+          image,
+          capacity,
+          available
+        });
+
+        const savedRoom = await newRoom.save();
+        return savedRoom;
+      } catch (error) {
+        console.error("Create room error:", error);
+        throw new Error(`Failed to create room: ${error.message}`);
+      }
     },
 
-    deleteRoom: async (_, { id }) => {
-      await dbConnect();
-      const deleted = await RoomModel.findByIdAndDelete(id);
-      return !!deleted;
+    // ✅ ADDED: deleteRoom mutation resolver (was also missing)
+    deleteRoom: async (_parent: unknown, { _id }: { _id: string }) => {
+      try {
+        await dbConnect();
+        
+        const deletedRoom = await RoomModel.findByIdAndDelete(_id);
+        
+        // Return true if room was found and deleted, false otherwise
+        return !!deletedRoom;
+      } catch (error) {
+        console.error("Delete room error:", error);
+        throw new Error(`Failed to delete room: ${error.message}`);
+      }
     },
-
 
     createBooking: async (
-      _: any,
-      { roomId, userId, checkIn, checkOut }: any
+      _parent: unknown,
+      { roomId, checkIn, checkOut }: { roomId: string; checkIn: string; checkOut: string },
+      _context: any
     ) => {
       await dbConnect();
 
+      // Verify user
+      const { id: userId, success } = await verifyUser(_context.req);
+      if (!success || !userId) throw new Error("Not authenticated ❌");
+
+      // Find room
       const room = await RoomModel.findById(roomId);
       if (!room) throw new Error("Room not found ❌");
       if (!room.available) throw new Error("Room is not available ❌");
 
+      // Calculate nights & totalPrice
       const nights =
         (new Date(checkOut).getTime() - new Date(checkIn).getTime()) /
         (1000 * 60 * 60 * 24);
-
       if (nights <= 0) throw new Error("Invalid booking dates ❌");
 
       const totalPrice = nights * room.price;
 
+      // Create booking
       const booking = new BookingModel({
         room: roomId,
         user: userId,
@@ -179,22 +258,22 @@ export const resolvers = {
         checkOut,
         totalPrice,
       });
-
       await booking.save();
 
-      // Optionally mark room unavailable
+      // Mark room unavailable
       room.available = false;
       await room.save();
 
-      return await booking.populate("room").populate("user");
+      // Populate room & user
+      await booking.populate(["room", "user"]);
+
+      return booking;
     },
   },
 };
 
-const apolloServer = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
+// ---------------- Apollo Server ----------------
+const apolloServer = new ApolloServer({ typeDefs, resolvers });
 
 const handler = startServerAndCreateNextHandler(apolloServer, {
   context: async (req: NextRequest) => ({ req }),
