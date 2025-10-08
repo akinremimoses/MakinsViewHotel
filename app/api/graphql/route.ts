@@ -7,6 +7,7 @@ import RoomModel from "@/models/roomSchema";
 import BookingModel from "@/models/bookingSchema";
 import UserModel from "@/models/usersSchema"; // ✅ Fixed import
 import { verifyUser } from "@/actions/verifyuser";
+import { sendBookingConfirmationEmail } from '@/lib/email-services';
 
 // ---------------- GraphQL Schema ----------------
 export const typeDefs = gql`
@@ -226,6 +227,8 @@ export const resolvers = {
       }
     },
 
+   
+// In your Mutation resolvers
     createBooking: async (
       _parent: unknown,
       { roomId, checkIn, checkOut }: { roomId: string; checkIn: string; checkOut: string },
@@ -242,10 +245,14 @@ export const resolvers = {
       if (!room) throw new Error("Room not found ❌");
       if (!room.available) throw new Error("Room is not available ❌");
 
+      // Find user for email
+      const user = await UserModel.findById(userId);
+      if (!user) throw new Error("User not found ❌");
+
       // Calculate nights & totalPrice
-      const nights =
-        (new Date(checkOut).getTime() - new Date(checkIn).getTime()) /
-        (1000 * 60 * 60 * 24);
+      const nights = Math.ceil(
+        (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
+      );
       if (nights <= 0) throw new Error("Invalid booking dates ❌");
 
       const totalPrice = nights * room.price;
@@ -266,6 +273,28 @@ export const resolvers = {
 
       // Populate room & user
       await booking.populate(["room", "user"]);
+
+      // ✅ Send booking confirmation email (non-blocking)
+      sendBookingConfirmationEmail(
+        user.email,
+        `${user.surname} ${user.middlename || ''}`.trim(),
+        room.title,
+        checkIn,
+        checkOut,
+        totalPrice,
+        nights,
+        booking._id.toString()
+      )
+        .then(result => {
+          if (result.success) {
+            console.log("✅ Booking confirmation email sent successfully");
+          } else {
+            console.error("❌ Failed to send booking confirmation email:", result.error);
+          }
+        })
+        .catch(emailError => {
+          console.error("❌ Booking email sending error:", emailError);
+        });
 
       return booking;
     },

@@ -5,6 +5,7 @@ import dbConnect from "@/lib/dbConnect"
 import bcrypt from "bcrypt";
 import { cookies } from "next/headers";
 import { jwtVerify, SignJWT } from "jose";
+import { sendWelcomeEmail } from "@/lib/email-services";
 
 
 const encodedSecret = new TextEncoder().encode(process.env.JWT_SECRET!)
@@ -38,11 +39,24 @@ export const registerUser = async (user: {
     await dbConnect();
     console.log("Creating user:", user.email);
 
-    const newUser = await UserModel.create(user); // ✅ should trigger pre("save")
+    const newUser = await UserModel.create(user);
+
+    // ✅ Send welcome email (non-blocking)
+    sendWelcomeEmail(user.surname, user.email)
+      .then(result => {
+        if (result.success) {
+          console.log("✅ Welcome email sent successfully");
+        } else {
+          console.error("❌ Failed to send welcome email:", result.error);
+        }
+      })
+      .catch(emailError => {
+        console.error("❌ Email sending error:", emailError);
+      });
 
     console.log("✅ User saved:", newUser._id);
-
     return { success: true };
+
   } catch (error: any) {
     console.error("❌ Register error:", error.message);
     return { success: false, error: error.message };
