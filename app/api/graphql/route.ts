@@ -5,11 +5,11 @@ import { NextRequest } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import RoomModel from "@/models/roomSchema";
 import BookingModel from "@/models/bookingSchema";
-import UserModel from "@/models/usersSchema"; // ✅ Fixed import
+import UserModel from "@/models/usersSchema";
 import { verifyUser } from "@/actions/verifyuser";
 import { sendBookingConfirmationEmail } from '@/lib/email-services';
 
-// ---------------- GraphQL Schema ----------------
+
 export const typeDefs = gql`
   type Room {
     _id: ID!
@@ -77,7 +77,7 @@ export const typeDefs = gql`
   }
 `;
 
-// ---------------- Resolvers ----------------
+//Resolvers
 export const resolvers = {
   Query: {
     rooms: async () => {
@@ -108,7 +108,7 @@ export const resolvers = {
       const user = await UserModel.findById(userId).lean();
       if (!user) return null;
 
-      // Include bookings for this user
+   
       const bookings = await BookingModel.find({ user: userId })
         .populate("room")
         .populate("user");
@@ -118,7 +118,7 @@ export const resolvers = {
   },
 
   Mutation: {
-    // ✅ ADDED: updateRoom mutation resolver
+    
     updateRoom: async (
       _parent: unknown,
       { 
@@ -156,12 +156,11 @@ export const resolvers = {
           _id,
           updateData,
           { 
-            new: true, // Return the updated document
-            runValidators: true // Run schema validators
+            new: true, 
+            runValidators: true 
           }
         );
 
-        // If room not found, throw error instead of returning null
         if (!updatedRoom) {
           console.log(`Room with id ${_id} not found`);
         }
@@ -173,7 +172,7 @@ export const resolvers = {
       }
     },
 
-    // ✅ ADDED: createRoom mutation resolver (was also missing)
+  
     createRoom: async (
       _parent: unknown,
       { 
@@ -212,23 +211,23 @@ export const resolvers = {
       }
     },
 
-    // ✅ ADDED: deleteRoom mutation resolver (was also missing)
+ 
     deleteRoom: async (_parent: unknown, { _id }: { _id: string }) => {
       try {
         await dbConnect();
         
         const deletedRoom = await RoomModel.findByIdAndDelete(_id);
         
-        // Return true if room was found and deleted, false otherwise
+     
         return !!deletedRoom;
       } catch (error) {
         console.error("Delete room error:", error);
-        throw new Error(`Failed to delete room: ${error.message}`);
+     
       }
     },
 
    
-// In your Mutation resolvers
+
     createBooking: async (
       _parent: unknown,
       { roomId, checkIn, checkOut }: { roomId: string; checkIn: string; checkOut: string },
@@ -240,12 +239,12 @@ export const resolvers = {
       const { id: userId, success } = await verifyUser(_context.req);
       if (!success || !userId) throw new Error("Not authenticated ❌");
 
-      // Find room
+      // Find d available room
       const room = await RoomModel.findById(roomId);
       if (!room) throw new Error("Room not found ❌");
       if (!room.available) throw new Error("Room is not available ❌");
 
-      // Find user for email
+      // Find d user with email
       const user = await UserModel.findById(userId);
       if (!user) throw new Error("User not found ❌");
 
@@ -274,7 +273,7 @@ export const resolvers = {
       // Populate room & user
       await booking.populate(["room", "user"]);
 
-      // ✅ Send booking confirmation email (non-blocking)
+      //  booking confirmation email
       sendBookingConfirmationEmail(
         user.email,
         `${user.surname} ${user.middlename || ''}`.trim(),
@@ -301,7 +300,7 @@ export const resolvers = {
   },
 };
 
-// ---------------- Apollo Server ----------------
+
 const apolloServer = new ApolloServer({ typeDefs, resolvers });
 
 const handler = startServerAndCreateNextHandler(apolloServer, {

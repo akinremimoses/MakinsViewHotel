@@ -12,8 +12,7 @@ const AboutUs = () => {
         className="object-cover opacity-70"
         priority
       />
-      
-      {/* Centered Content */}
+ 
       <div className='relative z-10 flex items-center justify-center h-full'>
         <div className='bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-4xl w-full mx-4'>
           <h1 className='text-4xl font-bold text-center text-gray-800 mb-8'>

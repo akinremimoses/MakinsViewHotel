@@ -9,7 +9,7 @@ const Loading = () => {
         <path
           fill="none"
           strokeLinecap="round"
-          stroke="#FF156D"
+          stroke="#1E40AF"
           strokeWidth="15"
           style={{ transformOrigin: "center" }}
           d="M70 95.5V112m0-84v16.5m0 0a25.5 25.5 0 1 0 0 51 25.5 25.5 0 0 0 0-51Zm36.4 4.5L92 57.3M33.6 91 48 82.7m0-25.5L33.6 49m58.5 33.8 14.3 8.2"

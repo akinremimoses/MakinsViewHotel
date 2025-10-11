@@ -75,11 +75,19 @@ const DashboardPage = () => {
     } 
   };
 
-  const calculateNights = (checkIn: string, checkOut: string) => {
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-    return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-  };
+  // const calculateNights = (checkIn: string, checkOut: string) => {
+  //   const start = new Date(checkIn);
+  //   const end = new Date(checkOut);
+  //   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  // };
+
+  const calculateNights = (checkIn: string | number, checkOut: string | number) => {
+  const start = new Date(Number(checkIn));
+  const end = new Date(Number(checkOut));
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0;
+  return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+};
+
 
   
   if (loading) return <Loading />;
@@ -143,12 +151,6 @@ const DashboardPage = () => {
               <p className="text-gray-500 font-semibold">Total Amount Spent</p>
               <p className="text-2xl font-bold">${totalAmount.toFixed(2)}</p>
             </div>
-            <div className="p-4 bg-white/90 backdrop-blur-sm rounded-lg shadow text-center">
-              <p className="text-gray-500 font-semibold">Upcoming Bookings</p>
-              <p className="text-2xl font-bold">
-                {user.bookings.filter(b => new Date(b.checkIn) >= new Date()).length}
-              </p>
-            </div>
           </div>
 
           {/* Bookings grid */}
@@ -164,15 +166,23 @@ const DashboardPage = () => {
                     className="w-full h-48 object-cover rounded mb-3"
                   />
                 )}
-                <h3 className="text-lg font-semibold mb-1">{b.room.title}</h3>
+                {/* <h3 className="text-lg font-semibold mb-1">{b.room.title}</h3>
                 <p>Capacity: {b.room.capacity}</p>
                 <p>Check-in: {b.checkIn}</p>
-                <p>Check-out: {new Date(b.checkOut).toLocaleDateString()}</p>
+                <p>Check-out: {new Date(b.checkOut).getTime()}</p>
                 <p>Nights: {calculateNights(b.checkIn, b.checkOut)}</p>
                 <p>Total Paid: ${b.totalPrice.toFixed(2)}</p>
                 <p className="text-sm text-gray-500">
-                  Booked At: {new Date(b.createdAt).toLocaleString()}
-                </p>
+                  Booked At: {new Date(b.createdAt).getTime()}
+                </p> */}
+
+                <h3 className="text-lg font-semibold mb-1">{b.room.title}</h3>
+                <p>Capacity: {b.room.capacity}</p>
+                <p> Check-in:{" "} {b.checkIn ? new Date(Number(b.checkIn)).toLocaleDateString() : "Not available"} </p>
+                <p> Check-out:{" "} {b.checkOut ? new Date(Number(b.checkOut)).toLocaleDateString() : "Not available"} </p>
+                <p> Nights:{" "} {b.checkIn && b.checkOut  ? calculateNights(Number(b.checkIn), Number(b.checkOut)) : "N/A"} </p>
+                <p>Total Paid: ${b.totalPrice.toFixed(2)}</p>
+                <p className="text-sm text-gray-500">  Booked At:{" "}  {b.createdAt  ? new Date(Number(b.createdAt)).toLocaleString()  : "Unknown"} </p>
               </div>
             ))}
           </div>

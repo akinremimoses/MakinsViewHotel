@@ -60,7 +60,7 @@ const Page = () => {
     if (res.success) {
       setError("✅ Login successful");
 
-      // ✅ Redirect based on user role
+      // Redirect based on user role, if d role is "admin" go to amin page and if the role is "user" go to d normal/default user ppage
       if (res.user?.role === "admin") {
         router.push("/admin-room");
       } else {

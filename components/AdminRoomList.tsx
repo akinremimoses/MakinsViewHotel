@@ -113,7 +113,7 @@ const AdminRoomListPage = () => {
         </div>
       </div>
 
-      {/* Room Cards Grid */}
+      {/* Rooms mapping */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {rooms.map((room) => (
           <div

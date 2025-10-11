@@ -7,7 +7,6 @@ import { useSearchParams, useRouter  } from "next/navigation";
 import Loading from "./loading"
 
 
-// GraphQL query & mutation
 const GET_ROOM = gql`
   query GetRoom($id: ID!) {
     room(_id: $id) {
@@ -36,10 +35,10 @@ const BookingPage = () => {
   const roomId = searchParams.get("roomId");
   const router = useRouter();
 
-  // 🔹 Booking form state
+ 
   const [form, setForm] = useState({ checkIn: "", checkOut: "" });
 
-  // 🔹 Fetch room
+  // get or fetch d room
   const { loading, error, data } = useQuery(GET_ROOM, {
     variables: { id: roomId },
     skip: !roomId,

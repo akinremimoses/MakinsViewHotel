@@ -3,7 +3,7 @@ import { HttpLink, InMemoryCache, ApolloClient } from "@apollo/client";
 const client = new ApolloClient({
   link: new HttpLink({
     uri: "/api/graphql",
-    credentials: "include", // ✅ moved here so HttpLink carries cookies
+    credentials: "include", 
   }),
   cache: new InMemoryCache(),
 });

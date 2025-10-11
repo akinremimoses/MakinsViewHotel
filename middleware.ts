@@ -43,7 +43,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ✅ Define public routes (accessible without auth)
+  // public routes accessible without auth
   const PUBLIC_PATHS = ["/", "/login", "/register", "/rooms"];
 
   // Skip auth check for public paths
@@ -51,7 +51,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ✅ Get JWT token from cookies
+  //Get JWT token from cookies
   const token = request.cookies.get("token")?.value;
 
   if (!token) {
@@ -69,7 +69,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    // ✅ Auth successful → allow request
+    //Auth successful, allow request
     return NextResponse.next();
   } catch (error) {
     console.error("❌ JWT verification failed:", error);
@@ -77,7 +77,7 @@ export async function middleware(request: NextRequest) {
   }
 }
 
-// ✅ Only run middleware on protected routes
+// Only run middleware on protected routes
 export const config = {
   matcher: ["/admin-room/:path*", "/profile", "/booking/:path*"], 
 };

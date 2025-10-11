@@ -5,11 +5,11 @@ const RoomSchema = new Schema(
     title: { type: String, required: true },
     description: { type: String },
     price: { type: Number, required: true },
-    image: { type: String, required: true }, // store image URL
-    capacity: { type: Number, required: true }, // number of guests allowed
-    available: { type: Boolean, default: true }, // availability status
+    image: { type: String, required: true }, 
+    capacity: { type: Number, required: true },
+    available: { type: Boolean, default: true },
   },
-  { timestamps: true } // adds createdAt & updatedAt
+  { timestamps: true } 
 );
 
 const RoomModel = models.Room || model("Room", RoomSchema);
