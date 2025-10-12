@@ -7,6 +7,20 @@ import { useSearchParams, useRouter  } from "next/navigation";
 import Loading from "./loading"
 
 
+interface Room {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  capacity: number;
+  available: boolean;
+}
+
+interface RoomQueryData {
+  room: Room;
+}
+
 const GET_ROOM = gql`
   query GetRoom($id: ID!) {
     room(_id: $id) {
@@ -39,8 +53,8 @@ const BookingPage = () => {
   const [form, setForm] = useState({ checkIn: "", checkOut: "" });
 
   // get or fetch d room
-  const { loading, error, data } = useQuery(GET_ROOM, {
-    variables: { id: roomId },
+  const { loading, error, data } = useQuery<RoomQueryData>(GET_ROOM, {
+    variables: { _id: roomId },
     skip: !roomId,
   });
 
