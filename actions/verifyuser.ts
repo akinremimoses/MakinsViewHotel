@@ -5,7 +5,7 @@ import { jwtVerify } from "jose";
 import UserModel from "@/models/usersSchema"; 
 
 export const verifyUser = async (req: any) => {
-  const cookieStore = cookies(); 
+  const cookieStore = await cookies(); 
   const token = cookieStore.get("token")?.value;
 
   if (!token) {
