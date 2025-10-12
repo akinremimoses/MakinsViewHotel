@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import UserModel from "@/models/usersSchema"; 
 
-export const verifyUser = async (req: any) => {
+export const verifyUser = async () => {
   const cookieStore = await cookies(); 
   const token = cookieStore.get("token")?.value;
 
