@@ -9,8 +9,18 @@ const RoomSchema = new Schema(
     capacity: { type: Number, required: true },
     available: { type: Boolean, default: true },
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
+
+export interface Room {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  capacity: number;
+  available: boolean;
+}
 
 const RoomModel = models.Room || model("Room", RoomSchema);
 export default RoomModel;

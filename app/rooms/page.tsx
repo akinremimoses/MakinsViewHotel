@@ -6,6 +6,8 @@ import { useQuery } from "@apollo/client/react";
 import Image from "next/image";
 import Link from "next/link";
 import RoomLoading from "./loading";
+import type { Room } from "@/models/roomSchema";
+
 
 const GET_ROOMS = gql`
   query {
@@ -37,7 +39,7 @@ const RoomsPage = () => {
     <div className="max-w-7xl mx-auto p-8 space-y-8">
       <h1 className="text-4xl font-bold text-gray-800 text-center mb-8">🏨 Available Rooms</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        {data.rooms.map((room: any) => (
+        {data.rooms.map((room: Room) => (
           <div 
             key={room._id} 
             className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100 overflow-hidden"
