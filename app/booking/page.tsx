@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {gql} from "@apollo/client"
+import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "@apollo/client/react";
-import { useSearchParams, useRouter  } from "next/navigation";
-import Loading from "./loading"
-
+import { useSearchParams, useRouter } from "next/navigation";
+import Loading from "./loading";
 
 interface Room {
   _id: string;
@@ -36,7 +35,9 @@ const CREATE_BOOKING = gql`
   mutation CreateBooking($roomId: ID!, $checkIn: String!, $checkOut: String!) {
     createBooking(roomId: $roomId, checkIn: $checkIn, checkOut: $checkOut) {
       _id
-      room { title }
+      room {
+        title
+      }
       checkIn
       checkOut
       totalPrice
@@ -49,12 +50,11 @@ const BookingPage = () => {
   const roomId = searchParams.get("roomId");
   const router = useRouter();
 
- 
   const [form, setForm] = useState({ checkIn: "", checkOut: "" });
 
-  // get or fetch d room
+  // Fetch the room
   const { loading, error, data } = useQuery<RoomQueryData>(GET_ROOM, {
-    variables: { _id: roomId },
+    variables: { id: roomId },
     skip: !roomId,
   });
 
@@ -74,27 +74,32 @@ const BookingPage = () => {
       });
       alert("Booking successful ✅");
       setForm({ checkIn: "", checkOut: "" });
-         router.push("/dashboard");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      router.push("/dashboard");
     } catch (err: any) {
       alert(err.message);
     }
   };
 
-  
+  // Handle loading and missing data
   if (loading) return <Loading />;
   if (error) return <p>Error loading room ❌❌</p>;
   if (!roomId) return <p>No room selected ❌</p>;
+  if (!data?.room) return <p>Room not found ❌</p>; // ✅ Add this safety check
 
-  const room = data?.room;
+  const room = data.room;
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow">
       <h1 className="text-2xl font-bold mb-4">Book Room</h1>
+
       <div className="mb-4">
         <h2 className="text-xl font-semibold">{room.title}</h2>
         <p className="text-blue-600 font-bold">${room.price}/night</p>
-        <p className={`mt-1 ${room.available ? "text-green-600" : "text-red-600"}`}>
+        <p
+          className={`mt-1 ${
+            room.available ? "text-green-600" : "text-red-600"
+          }`}
+        >
           {room.available ? "Available ✅" : "Not Available ❌"}
         </p>
       </div>
@@ -131,5 +136,3 @@ const BookingPage = () => {
 };
 
 export default BookingPage;
-
-
