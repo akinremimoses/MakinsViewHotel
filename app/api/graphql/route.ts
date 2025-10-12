@@ -119,58 +119,35 @@ export const resolvers = {
 
   Mutation: {
     
-    updateRoom: async (
-      _parent: unknown,
-      { 
-        _id, 
-        title, 
-        description, 
-        price, 
-        image, 
-        capacity, 
-        available 
-      }: { 
-        _id: string;
-        title?: string;
-        description?: string;
-        price?: number;
-        image?: string;
-        capacity?: number;
-        available?: boolean;
-      }
-    ) => {
-      try {
-        await dbConnect();
-        
-        // Build update object with only provided fields
-        const updateData: any = {};
-        if (title !== undefined) updateData.title = title;
-        if (description !== undefined) updateData.description = description;
-        if (price !== undefined) updateData.price = price;
-        if (image !== undefined) updateData.image = image;
-        if (capacity !== undefined) updateData.capacity = capacity;
-        if (available !== undefined) updateData.available = available;
+      updateRoom: async (
+  _parent: unknown,
+  { _id, title, description, price, image, capacity, available }: {
+    _id: string;
+    title?: string;
+    description?: string;
+    price?: number;
+    image?: string;
+    capacity?: number;
+    available?: boolean;
+  }
+) => {
+  try {
+    await dbConnect();
 
-        // Find and update the room
-        const updatedRoom = await RoomModel.findByIdAndUpdate(
-          _id,
-          updateData,
-          { 
-            new: true, 
-            runValidators: true 
-          }
-        );
+    const updatedRoom = await RoomModel.findByIdAndUpdate(
+      _id,
+      { title, description, price, image, capacity, available },
+      { new: true, runValidators: true }
+    );
 
-        if (!updatedRoom) {
-          console.log(`Room with id ${_id} not found`);
-        }
+    if (!updatedRoom) throw new Error("Room not found ❌");
 
-        return updatedRoom;
-      } catch (error) {
-        console.error("Update room error:", error);
-        throw new Error(`Failed to update room: ${error.message}`);
-      }
-    },
+    return updatedRoom;
+  } catch (error: any) {
+    console.error("Update room error:", error);
+    throw new Error(`Failed to update room: ${error.message}`);
+  }
+},
 
   
     createRoom: async (
