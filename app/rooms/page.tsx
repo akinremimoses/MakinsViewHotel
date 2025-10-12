@@ -1,11 +1,9 @@
-"use client"
+"use client";
 
-import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client/react";
+import { gql, useQuery } from "@apollo/client"; 
 import Image from "next/image";
-import Loading from "../loading"; 
+import Loading from "../loading";
 import { useParams } from "next/navigation";
-
 
 interface Room {
   _id: string;
@@ -21,7 +19,6 @@ interface RoomQueryData {
   room: Room;
 }
 
-
 const GET_ROOM = gql`
   query GetRoom($id: ID!) {
     room(_id: $id) {
@@ -36,20 +33,19 @@ const GET_ROOM = gql`
   }
 `;
 
-
 const RoomDetailsPage = () => {
   const params = useParams();
   const id = params?.id as string;
-  
+
   const { loading, error, data } = useQuery<RoomQueryData>(GET_ROOM, {
     variables: { id },
   });
 
   if (loading) return <Loading />;
   if (error) return <p>Error fetching room ❌</p>;
-  if (!data?.room) return <p>Room not found ❌</p>; 
+  if (!data?.room) return <p>Room not found ❌</p>;
 
-  const room = data.room; 
+  const room = data.room;
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
