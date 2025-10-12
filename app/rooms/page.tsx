@@ -1,17 +1,29 @@
 "use client";
 
-import client from "@/lib/graphql-client";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import Image from "next/image";
-import Link from "next/link";
-import RoomLoading from "./loading";
-import type { Room } from "@/models/roomSchema";
+import Loading from "../loading"; 
 
 
-const GET_ROOMS = gql`
-  query {
-    rooms {
+interface Room {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  capacity: number;
+  available: boolean;
+}
+
+interface RoomQueryData {
+  room: Room;
+}
+
+
+const GET_ROOM = gql`
+  query GetRoom($id: ID!) {
+    room(_id: $id) {
       _id
       title
       description
@@ -23,103 +35,45 @@ const GET_ROOMS = gql`
   }
 `;
 
-const RoomsPage = () => {
+
+const RoomDetailsPage = ({ params }: { params: { id: string } }) => {
+  const { id } = params;
+
   
-  const { loading, error, data } = useQuery<{ rooms: Room[] }>(GET_ROOMS, {
-    client,
+  const { loading, error, data } = useQuery<RoomQueryData>(GET_ROOM, {
+    variables: { id },
   });
 
-  if (loading) return <RoomLoading />;
+  if (loading) return <Loading />;
+  if (error) return <p>Error fetching room ❌</p>;
+  if (!data?.room) return <p>Room not found ❌</p>; 
 
-  if (error)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-lg font-semibold text-red-600">Error loading rooms</p>
-      </div>
-    );
-
-  
-  if (!data?.rooms || data.rooms.length === 0)
-    return (
-      <div className="text-center py-20">
-        <p className="text-gray-600 text-lg">No rooms available at the moment.</p>
-      </div>
-    );
+  const room = data.room; 
 
   return (
-    <div className="max-w-7xl mx-auto p-8 space-y-8">
-      <h1 className="text-4xl font-bold text-gray-800 text-center mb-8">
-        🏨 Available Rooms
-      </h1>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        {data.rooms.map((room) => (
-          <div
-            key={room._id}
-            className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100 overflow-hidden"
-          >
-            <Link href={`/rooms/${room._id}`}>
-              <Image
-                src={room.image}
-                alt={room.title}
-                width={500}
-                height={300}
-                className="w-full h-80 object-cover cursor-pointer hover:opacity-90 transition duration-300"
-              />
-            </Link>
-
-            <div className="p-6 flex flex-col flex-grow">
-              <div className="flex-grow">
-                <h2 className="text-2xl font-bold text-gray-800 mb-3">
-                  {room.title}
-                </h2>
-                <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
-                  {room.description}
-                </p>
-
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-2xl font-bold text-blue-600">
-                    ${room.price}
-                    <span className="text-sm font-normal text-gray-500">
-                      /night
-                    </span>
-                  </p>
-                  <p className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                    Capacity: {room.capacity} guest
-                    {room.capacity > 1 ? "s" : ""}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      room.available
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {room.available ? "Available ✅" : "Booked ❌"}
-                  </span>
-                </div>
-              </div>
-
-              <Link
-                href={`/booking?roomId=${room._id}`}
-                className={`mt-6 w-full text-center py-3 px-6 rounded-xl font-semibold text-white transition duration-300 ${
-                  room.available
-                    ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                    : "bg-gray-400 cursor-not-allowed"
-                }`}
-                onClick={(e) => !room.available && e.preventDefault()}
-              >
-                {room.available ? "Book Now" : "Not Available"}
-              </Link>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="max-w-3xl mx-auto p-6 space-y-6">
+      <Image
+        src={room.image}
+        alt={room.title}
+        width={800}
+        height={500}
+        className="w-full rounded-lg object-cover"
+      />
+      <h1 className="text-3xl font-bold">{room.title}</h1>
+      <p className="text-gray-600">{room.description}</p>
+      <p className="text-blue-600 font-bold text-lg">${room.price}/night</p>
+      <p>
+        Capacity: {room.capacity} guest{room.capacity > 1 ? "s" : ""}
+      </p>
+      <p
+        className={`font-semibold ${
+          room.available ? "text-green-600" : "text-red-600"
+        }`}
+      >
+        {room.available ? "Available ✅" : "Booked ❌"}
+      </p>
     </div>
   );
 };
 
-export default RoomsPage;
+export default RoomDetailsPage;
