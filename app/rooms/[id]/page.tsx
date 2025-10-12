@@ -7,6 +7,20 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
+interface Room {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  capacity: number;
+  available: boolean;
+}
+
+interface RoomData {
+  room: Room;
+}
+
 const GET_ROOM = gql`
   query Room($_id: ID!) {
     room(_id: $_id) {
@@ -25,13 +39,21 @@ const RoomDetailPage = () => {
   const params = useParams(); 
   const roomId = params.id as string;
 
-  const { loading, error, data } = useQuery(GET_ROOM, {
+  const { loading, error, data } = useQuery<RoomData>(GET_ROOM, { 
     variables: { _id: roomId }, 
     client,
   });
 
-  if (loading) return <div className="flex justify-center items-center h-screen"> <p className="text-lg font-semibold">Loading...</p>  </div>
+  if (loading) return (
+    <div className="flex justify-center items-center h-screen"> 
+      <p className="text-lg font-semibold">Loading...</p>  
+    </div>
+  );
+  
   if (error) return <p>Error fetching room</p>;
+  
+  
+  if (!data?.room) return <p>Room not found</p>;
 
   const room = data.room;
 
@@ -47,7 +69,7 @@ const RoomDetailPage = () => {
           alt={room.title}
           width={800}
           height={600}
-          className="rounded-lg object-cover w-full h-1/2"
+          className="rounded-lg object-cover w-full h-96"
         />
 
         <h1 className="text-3xl font-bold mt-4">{room.title}</h1>
@@ -68,9 +90,14 @@ const RoomDetailPage = () => {
 
         <Link
           href={`/booking?roomId=${room._id}`} 
-          className="mt-6 inline-block text-center py-2 px-6 rounded"
+          className={`mt-6 inline-block text-center py-3 px-6 rounded font-semibold text-white transition ${
+            room.available 
+              ? "bg-blue-600 hover:bg-blue-700" 
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
+          onClick={(e) => !room.available && e.preventDefault()}
         >
-          Book Now
+          {room.available ? "Book Now" : "Not Available"}
         </Link>
       </div>
     </div>
