@@ -43,9 +43,10 @@ const RoomDetailsPage = () => {
 
   if (loading) return <Loading />;
   if (error) return <p>Error fetching room ❌</p>;
-  if (!data?.room) return <p>Room not found ❌</p>;
-
-  const room = data.room;
+  
+  // Use optional chaining and nullish coalescing
+  const room = data?.room;
+  if (!room) return <p>Room not found ❌</p>;
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
