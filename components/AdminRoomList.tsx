@@ -10,6 +10,27 @@ import AdminRoomLoading from "@/app/admin-room/loading";
 import { logout } from "@/actions/user-action"; 
 
 
+interface Room {
+  _id: string;
+  title: string;
+  price: number;
+  image: string;
+  capacity: number;
+  available: boolean;
+}
+
+interface RoomsData {
+  rooms: Room[];
+}
+
+interface DeleteRoomData {
+  deleteRoom: boolean;
+}
+
+interface DeleteRoomVariables {
+  id: string;
+}
+
 const GET_ROOMS = gql`
   query {
     rooms {
@@ -31,10 +52,10 @@ const DELETE_ROOM = gql`
 
 const AdminRoomListPage = () => {
   const router = useRouter();
-  const { loading, error, data, refetch } = useQuery(GET_ROOMS, { client });
-  const [deleteRoom] = useMutation(DELETE_ROOM, { client });
+  const { loading, error, data, refetch } = useQuery<RoomsData>(GET_ROOMS, { client });
+  const [deleteRoom] = useMutation<DeleteRoomData, DeleteRoomVariables>(DELETE_ROOM, { client });
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this room?")) return;
     await deleteRoom({ variables: { id } });
     refetch();
@@ -115,7 +136,7 @@ const AdminRoomListPage = () => {
 
       {/* Rooms mapping */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {rooms.map((room) => (
+        {rooms.map((room: Room) => (
           <div
             key={room._id}
             className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 hover:shadow-xl transition"
