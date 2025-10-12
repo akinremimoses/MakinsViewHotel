@@ -61,6 +61,7 @@ const BookingPage = () => {
       alert("Booking successful ✅");
       setForm({ checkIn: "", checkOut: "" });
          router.push("/dashboard");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert(err.message);
     }

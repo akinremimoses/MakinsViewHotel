@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import gql from "graphql-tag";
@@ -143,9 +144,9 @@ export const resolvers = {
     if (!updatedRoom) throw new Error("Room not found ❌");
 
     return updatedRoom;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Update room error:", error);
-    throw new Error(`Failed to update room: ${error.message}`);
+    throw new Error(`Failed to update room`);
   }
 },
 
@@ -184,7 +185,7 @@ export const resolvers = {
         return savedRoom;
       } catch (error) {
         console.error("Create room error:", error);
-        throw new Error(`Failed to create room: ${error.message}`);
+        throw new Error(`Failed to create room:❌`);
       }
     },
 
