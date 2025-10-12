@@ -74,7 +74,6 @@ export const typeDefs = gql`
   }
 `;
 
-//Resolvers
 export const resolvers = {
   Query: {
     rooms: async () => {
@@ -99,13 +98,13 @@ export const resolvers = {
 
     me: async (_parent: unknown, _args: any, _context: any) => {
       await dbConnect();
-      const { id: userId, success } = await verifyUser(_context.req);
+      // FIX: Remove the argument from verifyUser
+      const { id: userId, success } = await verifyUser();
       if (!success || !userId) return null;
 
       const user = await UserModel.findById(userId).lean();
       if (!user) return null;
 
-   
       const bookings = await BookingModel.find({ user: userId })
         .populate("room")
         .populate("user");
@@ -115,38 +114,36 @@ export const resolvers = {
   },
 
   Mutation: {
-    
-      updateRoom: async (
-  _parent: unknown,
-  { _id, title, description, price, image, capacity, available }: {
-    _id: string;
-    title?: string;
-    description?: string;
-    price?: number;
-    image?: string;
-    capacity?: number;
-    available?: boolean;
-  }
-) => {
-  try {
-    await dbConnect();
+    updateRoom: async (
+      _parent: unknown,
+      { _id, title, description, price, image, capacity, available }: {
+        _id: string;
+        title?: string;
+        description?: string;
+        price?: number;
+        image?: string;
+        capacity?: number;
+        available?: boolean;
+      }
+    ) => {
+      try {
+        await dbConnect();
 
-    const updatedRoom = await RoomModel.findByIdAndUpdate(
-      _id,
-      { title, description, price, image, capacity, available },
-      { new: true, runValidators: true }
-    );
+        const updatedRoom = await RoomModel.findByIdAndUpdate(
+          _id,
+          { title, description, price, image, capacity, available },
+          { new: true, runValidators: true }
+        );
 
-    if (!updatedRoom) throw new Error("Room not found ❌");
+        if (!updatedRoom) throw new Error("Room not found ❌");
 
-    return updatedRoom;
-  } catch (error) {
-    console.error("Update room error:", error);
-    throw new Error(`Failed to update room`);
-  }
-},
+        return updatedRoom;
+      } catch (error) {
+        console.error("Update room error:", error);
+        throw new Error(`Failed to update room`);
+      }
+    },
 
-  
     createRoom: async (
       _parent: unknown,
       { 
@@ -185,22 +182,18 @@ export const resolvers = {
       }
     },
 
- 
     deleteRoom: async (_parent: unknown, { _id }: { _id: string }) => {
       try {
         await dbConnect();
         
         const deletedRoom = await RoomModel.findByIdAndDelete(_id);
         
-     
         return !!deletedRoom;
       } catch (error) {
         console.error("Delete room error:", error);
-     
+        throw new Error(`Failed to delete room`);
       }
     },
-
-   
 
     createBooking: async (
       _parent: unknown,
@@ -209,16 +202,16 @@ export const resolvers = {
     ) => {
       await dbConnect();
 
-      // Verify user
-      const { id: userId, success } = await verifyUser(_context.req);
+      // Verify user - FIX: Remove the argument from verifyUser
+      const { id: userId, success } = await verifyUser();
       if (!success || !userId) throw new Error("Not authenticated ❌");
 
-      // Find d available room
+      // Find room
       const room = await RoomModel.findById(roomId);
       if (!room) throw new Error("Room not found ❌");
       if (!room.available) throw new Error("Room is not available ❌");
 
-      // Find d user with email
+      // Find user with email
       const user = await UserModel.findById(userId);
       if (!user) throw new Error("User not found ❌");
 
@@ -247,7 +240,7 @@ export const resolvers = {
       // Populate room & user
       await booking.populate(["room", "user"]);
 
-      //  booking confirmation email
+      // Send booking confirmation email
       sendBookingConfirmationEmail(
         user.email,
         `${user.surname} ${user.middlename || ''}`.trim(),
@@ -271,6 +264,5 @@ export const resolvers = {
 
       return booking;
     },
-    
   },
 };
