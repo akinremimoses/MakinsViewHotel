@@ -1,9 +1,10 @@
-
+"use client"
 
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import Image from "next/image";
 import Loading from "../loading"; 
+import { useParams } from "next/navigation";
 
 
 interface Room {
@@ -36,9 +37,9 @@ const GET_ROOM = gql`
 `;
 
 
-const RoomDetailsPage = ({ params }: { params: { id: string } }) => {
-  const { id } = params;
-
+const RoomDetailsPage = () => {
+  const params = useParams();
+  const id = params?.id as string;
   
   const { loading, error, data } = useQuery<RoomQueryData>(GET_ROOM, {
     variables: { id },
