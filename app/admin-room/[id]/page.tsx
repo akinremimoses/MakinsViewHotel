@@ -105,15 +105,18 @@ export default function EditRoomPage() {
     }
   }, [roomDetails]);
 
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type, checked } = e.target;
-    setRoomEdit((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+) => {
+  const { name, value, type } = e.target;
+
+  setRoomEdit((prev) => ({
+    ...prev,
+    [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+  }));
+};
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
