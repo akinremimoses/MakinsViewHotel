@@ -24,9 +24,12 @@ const GET_ROOMS = gql`
 `;
 
 const RoomsPage = () => {
-  const { loading, error, data } = useQuery(GET_ROOMS, {client});
+  
+  const { loading, error, data } = useQuery<{ rooms: Room[] }>(GET_ROOMS, {
+    client,
+  });
 
-   if (loading) return <RoomLoading />;
+  if (loading) return <RoomLoading />;
 
   if (error)
     return (
@@ -35,13 +38,24 @@ const RoomsPage = () => {
       </div>
     );
 
+  
+  if (!data?.rooms || data.rooms.length === 0)
+    return (
+      <div className="text-center py-20">
+        <p className="text-gray-600 text-lg">No rooms available at the moment.</p>
+      </div>
+    );
+
   return (
     <div className="max-w-7xl mx-auto p-8 space-y-8">
-      <h1 className="text-4xl font-bold text-gray-800 text-center mb-8">🏨 Available Rooms</h1>
+      <h1 className="text-4xl font-bold text-gray-800 text-center mb-8">
+        🏨 Available Rooms
+      </h1>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        {data.rooms.map((room: Room) => (
-          <div 
-            key={room._id} 
+        {data.rooms.map((room) => (
+          <div
+            key={room._id}
             className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100 overflow-hidden"
           >
             <Link href={`/rooms/${room._id}`}>
@@ -53,24 +67,34 @@ const RoomsPage = () => {
                 className="w-full h-80 object-cover cursor-pointer hover:opacity-90 transition duration-300"
               />
             </Link>
-            
+
             <div className="p-6 flex flex-col flex-grow">
               <div className="flex-grow">
-                <h2 className="text-2xl font-bold text-gray-800 mb-3">{room.title}</h2>
-                <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">{room.description}</p>
-                
+                <h2 className="text-2xl font-bold text-gray-800 mb-3">
+                  {room.title}
+                </h2>
+                <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+                  {room.description}
+                </p>
+
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-2xl font-bold text-blue-600">${room.price}<span className="text-sm font-normal text-gray-500">/night</span></p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    ${room.price}
+                    <span className="text-sm font-normal text-gray-500">
+                      /night
+                    </span>
+                  </p>
                   <p className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                    Capacity: {room.capacity} guest{room.capacity > 1 ? "s" : ""}
+                    Capacity: {room.capacity} guest
+                    {room.capacity > 1 ? "s" : ""}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      room.available 
-                        ? "bg-green-100 text-green-800" 
+                      room.available
+                        ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }`}
                   >
@@ -82,8 +106,8 @@ const RoomsPage = () => {
               <Link
                 href={`/booking?roomId=${room._id}`}
                 className={`mt-6 w-full text-center py-3 px-6 rounded-xl font-semibold text-white transition duration-300 ${
-                  room.available 
-                    ? "bg-blue-600 hover:bg-blue-700 cursor-pointer" 
+                  room.available
+                    ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
                     : "bg-gray-400 cursor-not-allowed"
                 }`}
                 onClick={(e) => !room.available && e.preventDefault()}
@@ -96,6 +120,6 @@ const RoomsPage = () => {
       </div>
     </div>
   );
-}
+};
 
 export default RoomsPage;

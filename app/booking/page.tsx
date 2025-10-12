@@ -75,8 +75,13 @@ const BookingPage = () => {
       alert("Booking successful ✅");
       setForm({ checkIn: "", checkOut: "" });
       router.push("/dashboard");
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      // ✅ Type-safe error handling — no `any`
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("An unknown error occurred ❌");
+      }
     }
   };
 
@@ -84,7 +89,7 @@ const BookingPage = () => {
   if (loading) return <Loading />;
   if (error) return <p>Error loading room ❌❌</p>;
   if (!roomId) return <p>No room selected ❌</p>;
-  if (!data?.room) return <p>Room not found ❌</p>; // ✅ Add this safety check
+  if (!data?.room) return <p>Room not found ❌</p>;
 
   const room = data.room;
 
