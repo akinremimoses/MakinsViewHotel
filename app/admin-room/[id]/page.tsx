@@ -1,4 +1,3 @@
-
 "use client";
 
 import client from "@/lib/graphql-client";
@@ -6,6 +5,22 @@ import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+
+
+interface Room {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  capacity: number;
+  available: boolean;
+}
+
+interface RoomQueryData {
+  room: Room;
+}
+
 
 const GET_ROOM = gql`
   query Room($_id: ID!) {
@@ -55,7 +70,8 @@ export default function EditRoomPage() {
   const { id } = useParams();
   const router = useRouter();
 
-  const { data: roomData, loading } = useQuery(GET_ROOM, {
+  
+  const { data: roomData, loading } = useQuery<RoomQueryData>(GET_ROOM, {
     variables: { _id: id },
     client,
   });
@@ -77,8 +93,7 @@ export default function EditRoomPage() {
 
   useEffect(() => {
     if (roomDetails) {
-      const { title, description, price, image, capacity, available } =
-        roomDetails;
+      const { title, description, price, image, capacity, available } = roomDetails;
       setRoomEdit({
         title,
         description,
@@ -116,7 +131,6 @@ export default function EditRoomPage() {
     router.push("/admin-room");
   };
 
-  // Skeleton while loading
   if (loading) {
     return (
       <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow animate-pulse">
