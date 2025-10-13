@@ -5,8 +5,12 @@ import { useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+<<<<<<< HEAD
 import Loading from "../loading";
 import { ArrowLeft } from "lucide-react";
+=======
+import Loading from "../loading"
+>>>>>>> 836eaa3a7abc855440c4537ace3a64ac916a90ca
 
 interface Room {
   _id: string;
@@ -42,7 +46,11 @@ const RoomDetailPage = () => {
 
   const { loading, error, data } = useQuery<RoomData>(GET_ROOM, { 
     variables: { id: roomId },
+<<<<<<< HEAD
     skip: !roomId, 
+=======
+    
+>>>>>>> 836eaa3a7abc855440c4537ace3a64ac916a90ca
   });
 
   if (loading) return <Loading />;
@@ -50,13 +58,19 @@ const RoomDetailPage = () => {
   if (error) return (
     <div className="max-w-3xl mx-auto p-6">
       <p className="text-red-600">Error fetching room: {error.message}</p>
+<<<<<<< HEAD
       <Link href="/rooms" className="text-blue-600 hover:underline mt-4 inline-block flex items-center">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Rooms
+=======
+      <Link href="/rooms" className="text-blue-600 hover:underline mt-4 inline-block">
+        ← Back to Rooms
+>>>>>>> 836eaa3a7abc855440c4537ace3a64ac916a90ca
       </Link>
     </div>
   );
   
+<<<<<<< HEAD
   if (!roomId) return (
     <div className="max-w-3xl mx-auto p-6">
       <p>No room ID provided</p>
@@ -76,6 +90,16 @@ const RoomDetailPage = () => {
       </Link>
     </div>
   );
+=======
+  // if (!data?.room) return (
+  //   <div className="max-w-3xl mx-auto p-6">
+  //     <p>Room not found</p>
+  //     <Link href="/rooms" className="text-blue-600 hover:underline mt-4 inline-block">
+  //       ← Back to Rooms
+  //     </Link>
+  //   </div>
+  // );
+>>>>>>> 836eaa3a7abc855440c4537ace3a64ac916a90ca
 
   const room = data.room;
 
