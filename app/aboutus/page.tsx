@@ -26,7 +26,7 @@ const AboutUs = () => {
               </h3>
               <p className='text-gray-900  text-2xl'>
                 Founded with a vision to provide exceptional hospitality experiences, 
-                MakinsViewHotel has been serving guests with luxury and comfort since our inception.
+                MakinsViewHotel has been serving guests with luxury and comfort since our inception...
               </p>
             </div>
 
