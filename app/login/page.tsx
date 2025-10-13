@@ -87,12 +87,12 @@ const Page = () => {
       />
 
       <div className="flex items-center justify-center h-screen bg-gray-100">
-        <div className="p-6 border rounded-lg w-full max-w-md bg-white shadow absolute">
-          <h2 className="text-xl font-bold mb-6 text-center">Login</h2>
+        <div className="p-6 border border-gray-300 rounded-lg w-full max-w-md bg-white shadow-lg absolute mx-4">
+          <h2 className="text-xl font-bold mb-6 text-center text-gray-800">Login</h2>
 
           <form className="flex flex-col gap-4" onSubmit={handleLogin}>
-            <div className="flex items-center border rounded px-3">
-              <Mail className="text-gray-500 w-5 h-5 mr-2" />
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 bg-white">
+              <Mail className="text-gray-800 w-5 h-5 mr-2" />
               <input
                 type="email"
                 name="email"
@@ -100,12 +100,12 @@ const Page = () => {
                 required
                 value={loginInfo.email}
                 onChange={handleInputChange}
-                className="w-full h-10 outline-none"
+                className="w-full h-10 outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium"
               />
             </div>
 
-            <div className="flex items-center border rounded px-3">
-              <Lock className="text-gray-500 w-5 h-5 mr-2" />
+            <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 bg-white">
+              <Lock className="text-gray-800 w-5 h-5 mr-2" />
               <input
                 type="password"
                 name="password"
@@ -113,7 +113,7 @@ const Page = () => {
                 required
                 value={loginInfo.password}
                 onChange={handleInputChange}
-                className="w-full h-10 outline-none"
+                className="w-full h-10 outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium"
               />
             </div>
 
@@ -122,15 +122,15 @@ const Page = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-blue-600 text-white py-2 rounded transition 
-              ${loading ? "bg-gray-400 cursor-not-allowed" : "hover:bg-blue-700"}`}
+              className={`bg-blue-800 text-white py-2 rounded transition 
+              ${loading ? "bg-gray-800 cursor-not-allowed" : "hover:bg-blue-700"}`}
             >
               {loading ? "Logging in..." : "Login"}
             </button>
 
             <div className="flex gap-4">
-              <h2>Do you have an account? No </h2>
-              <Link href="/signup" className="text-blue-600 underline">
+              <h2 className="text-gray-800">Do you have an account? No </h2>
+              <Link href="/signup" className="text-blue-800 underline">
                 Sign Up here
               </Link>
             </div>

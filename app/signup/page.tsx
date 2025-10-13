@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from "next/image"
@@ -62,12 +61,12 @@ const Page = () => {
 
       
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-lg">
+        <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-lg mx-4">
           <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex items-center border rounded px-3 py-2">
-              <User className="text-gray-500 mr-2" size={18} />
+            <div className="flex items-center border border-gray-300 rounded px-3 py-2 bg-white">
+              <User className="text-gray-600 mr-2" size={18} />
               <input
                 type="text"
                 name="surname"
@@ -75,24 +74,24 @@ const Page = () => {
                 onChange={formInputChange}
                 placeholder="Surname"
                 required
-                className="flex-1 outline-none bg-transparent"
+                className="flex-1 outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium"
               />
             </div>
 
-            <div className="flex items-center border rounded px-3 py-2">
-              <User className="text-gray-500 mr-2" size={18} />
+            <div className="flex items-center border border-gray-300 rounded px-3 py-2 bg-white">
+              <User className="text-gray-600 mr-2" size={18} />
               <input
                 type="text"
                 name="middlename"
                 value={formInput.middlename}
                 onChange={formInputChange}
                 placeholder="Middlename"
-                className="flex-1 outline-none bg-transparent"
+                className="flex-1 outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium"
               />
             </div>
 
-            <div className="flex items-center border rounded px-3 py-2">
-              <Mail className="text-gray-500 mr-2" size={18} />
+            <div className="flex items-center border border-gray-300 rounded px-3 py-2 bg-white">
+              <Mail className="text-gray-600 mr-2" size={18} />
               <input
                 type="email"
                 name="email"
@@ -100,25 +99,25 @@ const Page = () => {
                 onChange={formInputChange}
                 placeholder="Email"
                 required
-                className="flex-1 outline-none bg-transparent"
+                className="flex-1 outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium"
               />
             </div>
 
-            <div className="flex items-center border rounded px-3 py-2">
-              <Phone className="text-gray-500 mr-2" size={18} />
+            <div className="flex items-center border border-gray-300 rounded px-3 py-2 bg-white">
+              <Phone className="text-gray-600 mr-2" size={18} />
               <input
-                type="number"
+                type="tel" 
                 name="phonenumber"
                 value={formInput.phonenumber}
                 onChange={formInputChange}
                 placeholder="Phone Number"
                 required
-                className="flex-1 outline-none bg-transparent"
+                className="flex-1 outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium"
               />
             </div>
 
-            <div className="flex items-center border rounded px-3 py-2">
-              <Lock className="text-gray-500 mr-2" size={18} />
+            <div className="flex items-center border border-gray-300 rounded px-3 py-2 bg-white">
+              <Lock className="text-gray-600 mr-2" size={18} />
               <input
                 type="password"
                 name="password"
@@ -126,18 +125,9 @@ const Page = () => {
                 onChange={formInputChange}
                 placeholder="Password"
                 required
-                className="flex-1 outline-none bg-transparent"
+                className="flex-1 outline-none bg-transparent text-gray-800 placeholder-gray-500 font-medium"
               />
             </div>
-
-            {/* <button
-              type="submit"
-              disabled={loading}
-              className="bg-[rgb(79,133,167)] hover:bg-[rgb(238,164,34)] transition text-white py-2 rounded font-medium"
-            >
-              {loading ? "Signinup..." : "Sign Up"} THIS IS USEFUL ONLY WHEN YOU DONT WANT AN ANIMATION BESIDE YOUR button text
-              Sign Up
-            </button> */}
 
             <button
               type="submit"
