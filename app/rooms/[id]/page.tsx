@@ -2,10 +2,10 @@
 
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import client from "@/lib/graphql-client";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Loading from "../loading"
 
 interface Room {
   _id: string;
@@ -22,8 +22,8 @@ interface RoomData {
 }
 
 const GET_ROOM = gql`
-  query Room($_id: ID!) {
-    room(_id: $_id) {
+  query GetRoom($id: ID!) {
+    room(_id: $id) {
       _id
       title
       description
@@ -40,20 +40,29 @@ const RoomDetailPage = () => {
   const roomId = params.id as string;
 
   const { loading, error, data } = useQuery<RoomData>(GET_ROOM, { 
-    variables: { _id: roomId }, 
-    client,
+    variables: { id: roomId },
+    
   });
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-screen"> 
-      <p className="text-lg font-semibold">Loading...</p>  
+  if (loading) return <Loading />;
+  
+  if (error) return (
+    <div className="max-w-3xl mx-auto p-6">
+      <p className="text-red-600">Error fetching room: {error.message}</p>
+      <Link href="/rooms" className="text-blue-600 hover:underline mt-4 inline-block">
+        ← Back to Rooms
+      </Link>
     </div>
   );
   
-  if (error) return <p>Error fetching room</p>;
-  
-  
-  if (!data?.room) return <p>Room not found</p>;
+  // if (!data?.room) return (
+  //   <div className="max-w-3xl mx-auto p-6">
+  //     <p>Room not found</p>
+  //     <Link href="/rooms" className="text-blue-600 hover:underline mt-4 inline-block">
+  //       ← Back to Rooms
+  //     </Link>
+  //   </div>
+  // );
 
   const room = data.room;
 
