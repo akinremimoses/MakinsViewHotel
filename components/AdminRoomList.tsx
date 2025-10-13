@@ -181,9 +181,9 @@ const AdminRoomListPage = () => {
       </div>
 
       {/* Empty state */}
-      {rooms.length === 0 && (
+      {/* {rooms.length === 0 && (
         <p className="text-center text-gray-500 mt-10">No rooms found. Add a new one above 👆</p>
-      )}
+      )} */}
     </div>
   );
 };

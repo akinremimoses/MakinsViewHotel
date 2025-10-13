@@ -23,7 +23,7 @@ export const typeDefs = gql`
     surname: String!
     middlename: String
     email: String!
-     bookings: [Booking!]! 
+    bookings: [Booking!]! 
   }
 
   type Booking {
@@ -77,13 +77,32 @@ export const typeDefs = gql`
 export const resolvers = {
   Query: {
     rooms: async () => {
-      await dbConnect();
-      return await RoomModel.find();
+      try {
+        await dbConnect();
+        console.log("Fetching all rooms...");
+        const rooms = await RoomModel.find();
+        console.log(`Found ${rooms.length} rooms`);
+        return rooms;
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+        throw new Error("Failed to fetch rooms");
+      }
     },
 
     room: async (_parent: unknown, { _id }: { _id: string }) => {
-      await dbConnect();
-      return await RoomModel.findById(_id);
+      try {
+        await dbConnect();
+        console.log(`Fetching room with ID: ${_id}`);
+        const room = await RoomModel.findById(_id);
+        if (!room) {
+          console.log("Room not found");
+          throw new Error("Room not found");
+        }
+        return room;
+      } catch (error) {
+        console.error("Error fetching room:", error);
+        throw new Error("Failed to fetch room");
+      }
     },
 
     bookings: async () => {
@@ -98,7 +117,6 @@ export const resolvers = {
 
     me: async (_parent: unknown, _args: any, _context: any) => {
       await dbConnect();
-      // FIX: Remove the argument from verifyUser
       const { id: userId, success } = await verifyUser();
       if (!success || !userId) return null;
 
@@ -202,20 +220,16 @@ export const resolvers = {
     ) => {
       await dbConnect();
 
-      // Verify user - FIX: Remove the argument from verifyUser
       const { id: userId, success } = await verifyUser();
       if (!success || !userId) throw new Error("Not authenticated ❌");
 
-      // Find room
       const room = await RoomModel.findById(roomId);
       if (!room) throw new Error("Room not found ❌");
       if (!room.available) throw new Error("Room is not available ❌");
 
-      // Find user with email
       const user = await UserModel.findById(userId);
       if (!user) throw new Error("User not found ❌");
 
-      // Calculate nights & totalPrice
       const nights = Math.ceil(
         (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
       );
@@ -223,7 +237,6 @@ export const resolvers = {
 
       const totalPrice = nights * room.price;
 
-      // Create booking
       const booking = new BookingModel({
         room: roomId,
         user: userId,
@@ -233,14 +246,11 @@ export const resolvers = {
       });
       await booking.save();
 
-      // Mark room unavailable
       room.available = false;
       await room.save();
 
-      // Populate room & user
       await booking.populate(["room", "user"]);
 
-      // Send booking confirmation email
       sendBookingConfirmationEmail(
         user.email,
         `${user.surname} ${user.middlename || ''}`.trim(),
@@ -255,7 +265,7 @@ export const resolvers = {
           if (result.success) {
             console.log("✅ Booking confirmation email sent successfully");
           } else {
-            console.error("❌ Failed to send booking confirmation email:", result.error);
+            console.log("❌ Failed to send booking confirmation email:", result.error);
           }
         })
         .catch(emailError => {

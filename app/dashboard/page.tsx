@@ -118,13 +118,14 @@ const DashboardPage = () => {
             <ul className="space-y-2">
               <li><Link href="/rooms" className="block w-full text-left px-4 py-2 bg-blue-500 hover:bg-blue-800 rounded transition cursor-pointer"> AVAILABLE ROOMS </Link></li>
               <li> <Link href="/profile" className="block w-full text-left px-4 py-2 bg-blue-500 hover:bg-blue-800 rounded transition cursor-pointer"> PROFILE</Link> </li>
-              <li> <Link href="/about" className="block w-full text-left px-4 py-2 bg-blue-500 hover:bg-blue-800 rounded transition cursor-pointer">ABOUT US </Link> </li>
+              <li> <Link href="/aboutus" className="block w-full text-left px-4 py-2 bg-blue-500 hover:bg-blue-800 rounded transition cursor-pointer">ABOUT US </Link> </li>
               <li><Link href="/events" className="block w-full text-left px-4 py-2 bg-blue-500 hover:bg-blue-800 rounded transition cursor-pointer">EVENTS </Link> </li>
             </ul>
         </div>
 
         {/* Main content */}
         <div className="w-3/4 space-y-6">
+
           {/* Top navbar */}
           <div className="flex justify-between items-center h-24 mb-6 bg-white/90 backdrop-blur-sm shadow px-6 rounded-lg">
             <h1 className="text-3xl font-bold text-blue-800">MakinsViewHotel</h1>
@@ -178,11 +179,11 @@ const DashboardPage = () => {
 
                 <h3 className="text-lg font-semibold mb-1">{b.room.title}</h3>
                 <p>Capacity: {b.room.capacity}</p>
-                <p> Check-in:{" "} {b.checkIn ? new Date(Number(b.checkIn)).toLocaleDateString() : "Not available"} </p>
-                <p> Check-out:{" "} {b.checkOut ? new Date(Number(b.checkOut)).toLocaleDateString() : "Not available"} </p>
-                <p> Nights:{" "} {b.checkIn && b.checkOut  ? calculateNights(Number(b.checkIn), Number(b.checkOut)) : "N/A"} </p>
+                <p> Check-in: {new Date(Number(b.checkIn)).toLocaleDateString() } </p>
+                <p> Check-out: { new Date(Number(b.checkOut)).toLocaleDateString() } </p>
+                <p> Nights: {calculateNights(Number(b.checkIn), Number(b.checkOut)) } </p>
                 <p>Total Paid: ${b.totalPrice.toFixed(2)}</p>
-                <p className="text-sm text-gray-500">  Booked At:{" "}  {b.createdAt  ? new Date(Number(b.createdAt)).toLocaleString()  : "Unknown"} </p>
+                <p className="text-sm text-gray-500">  Booked At:  {new Date(Number(b.createdAt)).toLocaleString() } </p>
               </div>
             ))}
           </div>
