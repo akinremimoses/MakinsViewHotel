@@ -1,164 +1,93 @@
 
-
-
-// 'use client'
+// 'use client';
 
 // import Link from 'next/link';
 // import { useState } from 'react';
 
 // export default function Navbar() {
-//   const [isMenuOpen, setIsMenuOpen] = useState(false);
 //   const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
 
+//   // Separate function for toggling dropdown
+//   const handleAuthDropdownToggle = () => {
+//     setIsAuthDropdownOpen((prev) => !prev);
+//   };
+
 //   return (
-//     <nav className="bg-white shadow-lg sticky top-0 z-50">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <div className="flex justify-between h-16">
-//           {/* Left side - Empty for balance */}
-//           <div className="flex items-center md:w-1/3"></div>
+//     <nav className="bg-white shadow-md sticky top-0 z-50">
+//       <div className="max-w-7xl mx-auto flex justify-between items-center h-16 px-6">
+//         {/* Logo / Brand */}
+//         <Link
+//           href="/"
+//           className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
+//         >
+//           MakinsViewHotel
+//         </Link>
 
-//           {/* Center - Logo/Brand Name */}
-//           <div className="flex items-center justify-center md:w-1/3">
-//             <Link href="/" className="flex-shrink-0">
-//               <h1 className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
-//                 MakinsViewHotel
-//               </h1>
-//             </Link>
-//           </div>
+//         {/* Navigation Links */}
+//         <div className="flex items-center space-x-6">
+//           <Link
+//             href="/rooms"
+//             className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+//           >
+//             CHECK ROOMS
+//           </Link>
 
-//           {/* Right side - Navigation Links (Desktop) */}
-//           <div className="hidden md:flex items-center justify-end space-x-6 md:w-1/3">
-//             {/* CHECK ROOMS Link */}
-//             <Link
-//               href="/rooms"
-//               className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-//             >
-//               CHECK ROOMS
-//             </Link>
+//           <Link
+//             href="/booking"
+//             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition-colors"
+//           >
+//             BOOK
+//           </Link>
 
-//             {/* BOOK Button */}
-//             <Link
-//               href="/booking"
-//               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm"
-//             >
-//               BOOK
-//             </Link>
-
-//             {/* Authentication Dropdown */}
-//             <div className="relative">
-//               <button
-//                 onClick={() => setIsAuthDropdownOpen(!isAuthDropdownOpen)}
-//                 className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
-//               >
-//                 Login/Sign Up
-//                 <svg
-//                   className={`ml-1 h-4 w-4 transition-transform ${
-//                     isAuthDropdownOpen ? 'rotate-180' : ''
-//                   }`}
-//                   fill="none"
-//                   viewBox="0 0 24 24"
-//                   stroke="currentColor"
-//                 >
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-//                 </svg>
-//               </button>
-
-//               {/* Dropdown Menu */}
-//               {isAuthDropdownOpen && (
-//                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
-//                   <Link
-//                     href="/login"
-//                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-//                     onClick={() => setIsAuthDropdownOpen(false)}
-//                   >
-//                     Login
-//                   </Link>
-//                   <Link
-//                     href="/signup"
-//                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-//                     onClick={() => setIsAuthDropdownOpen(false)}
-//                   >
-//                     Sign Up
-//                   </Link>
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-
-//           {/* Mobile menu button */}
-//           <div className="md:hidden flex items-center">
+//           {/* Auth Dropdown */}
+//           <div className="relative">
 //             <button
-//               onClick={() => setIsMenuOpen(!isMenuOpen)}
-//               className="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600"
+//               onClick={handleAuthDropdownToggle}
+//               className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors"
 //             >
-//               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                 {isMenuOpen ? (
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-//                 ) : (
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-//                 )}
+//               Login / Sign Up
+//               <svg
+//                 className={`ml-1 h-4 w-4 transition-transform ${
+//                   isAuthDropdownOpen ? 'rotate-180' : ''
+//                 }`}
+//                 fill="none"
+//                 viewBox="0 0 24 24"
+//                 stroke="currentColor"
+//               >
+//                 <path
+//                   strokeLinecap="round"
+//                   strokeLinejoin="round"
+//                   strokeWidth={2}
+//                   d="M19 9l-7 7-7-7"
+//                 />
 //               </svg>
 //             </button>
-//           </div>
-//         </div>
 
-//         {/* Mobile Menu */}
-//         {isMenuOpen && (
-//           <div className="md:hidden border-t border-gray-200">
-//             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-//               {/* CHECK ROOMS Link */}
-//               <Link
-//                 href="/rooms"
-//                 className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-//                 onClick={() => setIsMenuOpen(false)}
-//               >
-//                 CHECK ROOMS
-//               </Link>
-
-//               {/* BOOK Button */}
-//               <Link
-//                 href="/booking"
-//                 className="bg-blue-600 hover:bg-blue-700 text-white block px-3 py-2 rounded-md text-base font-medium transition-colors text-center"
-//                 onClick={() => setIsMenuOpen(false)}
-//               >
-//                 BOOK
-//               </Link>
-
-//               {/* Authentication Links */}
-//               <div className="border-t border-gray-200 pt-2">
+//             {isAuthDropdownOpen && (
+//               <div className="absolute right-0 mt-2 w-44 bg-white border rounded-md shadow-lg py-1 z-50">
 //                 <Link
 //                   href="/login"
-//                   className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-//                   onClick={() => setIsMenuOpen(false)}
+//                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+//                   onClick={() => setIsAuthDropdownOpen(false)}
 //                 >
 //                   Login
 //                 </Link>
 //                 <Link
-//                   href="/register"
-//                   className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-//                   onClick={() => setIsMenuOpen(false)}
+//                   href="/signup"
+//                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+//                   onClick={() => setIsAuthDropdownOpen(false)}
 //                 >
 //                   Sign Up
 //                 </Link>
 //               </div>
-//             </div>
+//             )}
 //           </div>
-//         )}
+//         </div>
 //       </div>
-
-//       {/* Overlay to close dropdowns when clicking outside */}
-//       {(isMenuOpen || isAuthDropdownOpen) && (
-//         <div
-//           className="fixed inset-0 z-40"
-//           onClick={() => {
-//             setIsMenuOpen(false);
-//             setIsAuthDropdownOpen(false);
-//           }}
-//         ></div>
-//       )}
 //     </nav>
 //   );
 // }
+
 
 
 'use client';
@@ -168,25 +97,32 @@ import { useState } from 'react';
 
 export default function Navbar() {
   const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Separate function for toggling dropdown
   const handleAuthDropdownToggle = () => {
     setIsAuthDropdownOpen((prev) => !prev);
   };
 
+  const closeAllMenus = () => {
+    setIsMobileMenuOpen(false);
+    setIsAuthDropdownOpen(false);
+  };
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex justify-between items-center h-16 px-6">
+      <div className="max-w-7xl mx-auto flex justify-between items-center h-16 px-4 sm:px-6">
         {/* Logo / Brand */}
         <Link
           href="/"
-          className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
+          className="text-xl sm:text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
+          onClick={closeAllMenus}
         >
           MakinsViewHotel
         </Link>
 
-        {/* Navigation Links */}
-        <div className="flex items-center space-x-6">
+        {/* Desktop Navigation - hidden on mobile */}
+        <div className="hidden md:flex items-center space-x-6">
           <Link
             href="/rooms"
             className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
@@ -194,6 +130,7 @@ export default function Navbar() {
             CHECK ROOMS
           </Link>
 
+          {/* BOOK button - hidden on mobile, visible on desktop */}
           <Link
             href="/booking"
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition-colors"
@@ -245,7 +182,97 @@ export default function Navbar() {
             )}
           </div>
         </div>
+
+        {/* Mobile menu button - visible on mobile */}
+        <div className="flex md:hidden items-center space-x-4">
+          {/* Auth dropdown for mobile */}
+          <div className="relative">
+            <button
+              onClick={handleAuthDropdownToggle}
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium flex items-center transition-colors"
+            >
+              Account
+              <svg
+                className={`ml-1 h-4 w-4 transition-transform ${
+                  isAuthDropdownOpen ? 'rotate-180' : ''
+                }`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {isAuthDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-44 bg-white border rounded-md shadow-lg py-1 z-50">
+                <Link
+                  href="/login"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  onClick={closeAllMenus}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  onClick={closeAllMenus}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile hamburger menu */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-gray-700 hover:text-blue-600 p-2 rounded-md transition-colors"
+          >
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+              />
+            </svg>
+          </button>
+        </div>
       </div>
+
+      {/* Mobile menu - shown when hamburger is clicked */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 py-2 px-4">
+          <div className="flex flex-col space-y-3">
+            <Link
+              href="/rooms"
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              onClick={closeAllMenus}
+            >
+              CHECK ROOMS
+            </Link>
+            {/* BOOK link for mobile - as regular link instead of button */}
+            <Link
+              href="/booking"
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              onClick={closeAllMenus}
+            >
+              BOOK NOW
+            </Link>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

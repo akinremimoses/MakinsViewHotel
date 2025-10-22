@@ -7,6 +7,7 @@ export interface IUser extends Document {
   email: string
   phonenumber: string
   password: string
+  profileImage?: string
   role: "user" | "admin";
   createdAt: Date
   updatedAt: Date
