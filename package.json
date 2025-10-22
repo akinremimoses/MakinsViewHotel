@@ -12,6 +12,8 @@
     "@apollo/client": "^4.0.7",
     "@apollo/server": "^5.0.0",
     "@as-integrations/next": "^4.0.0",
+    "@cloudinary/react": "^1.14.3",
+    "@cloudinary/url-gen": "^1.22.0",
     "bcrypt": "^6.0.0",
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
@@ -20,6 +22,7 @@
     "lucide-react": "^0.544.0",
     "mongoose": "^8.18.1",
     "next": "15.5.3",
+    "next-cloudinary": "^6.16.1",
     "nodemailer": "^7.0.9",
     "react": "19.1.0",
     "react-dom": "19.1.0"

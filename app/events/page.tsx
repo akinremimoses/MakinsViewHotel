@@ -4,7 +4,7 @@ import Image from 'next/image'
 const Events = () => {
   return (
     <div className='relative h-screen w-full overflow-hidden'>
-      {/* Background Image */}
+      
       <Image
         src="/homepage3.jpg" 
         alt="Hotel Events Background"
@@ -13,7 +13,7 @@ const Events = () => {
         priority
       />
       
-      {/* Centered Content */}
+      
       <div className='relative z-10 flex items-center justify-center h-full'>
         <div className='bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-4xl w-full mx-4'>
           <h1 className='text-4xl font-bold text-center text-gray-800 mb-8'>
